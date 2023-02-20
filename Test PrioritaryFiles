@@ -1,0 +1,29 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+
+class Program {
+    static void Main() {
+        Console.WriteLine("Quelles sont les extensions de fichiers prioritaires à copier ?");
+        string extensions = Console.ReadLine();
+        List<string> prioritizedExtensions = new List<string>(extensions.Split(','));
+
+        Console.WriteLine("Quel est le répertoire source de la copie ?");
+        string sourceDirectory = Console.ReadLine();
+
+        Console.WriteLine("Quel est le répertoire de destination de la copie ?");
+        string destinationDirectory = Console.ReadLine();
+
+        DirectoryInfo dir = new DirectoryInfo(sourceDirectory);
+        foreach (FileInfo file in dir.GetFiles("*.*", SearchOption.AllDirectories)) {
+            if (prioritizedExtensions.Contains(file.Extension)) {
+                string relativePath = file.FullName.Substring(sourceDirectory.Length);
+                string destPath = Path.Combine(destinationDirectory, relativePath);
+                Directory.CreateDirectory(Path.GetDirectoryName(destPath));
+                File.Copy(file.FullName, destPath, true);
+            }
+        }
+
+        Console.WriteLine("La copie est terminée !");
+    }
+}
